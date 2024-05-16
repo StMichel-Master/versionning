@@ -6,7 +6,7 @@
 	<artifactId>projetgit</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>projetgit</name>
-	<description>TP Versionning</description>
+	<description>TP Versionning EXO</description>
 	<dependencies>
 		<dependency>
 			<groupId>mysql</groupId>
