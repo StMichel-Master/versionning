@@ -1,10 +1,8 @@
-package stmichel;
+package fr.stmichel;
 
 
 import java.sql.*;
 import java.util.*;
-
-import fr.stmichel.Employee;
 
 public class EmployeeDAO extends DAOcontext{
 
