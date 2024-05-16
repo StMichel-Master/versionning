@@ -1,151 +1,99 @@
 package fr.stmichel;
 
+import java.util.List;
 
-import java.sql.*;
-import java.util.*;
+import jakarta.persistence.*;
 
-public class EmployeeDAO extends DAOcontext{
+public class EmployeeDAO {
+	private EntityManagerFactory entityManagerFactory = null;
+	private EntityManager entityManager = null;
 
-    private static final String INSERT = "INSERT INTO Employee (name, lastname, address, salary) VALUES (?, ?, ?, ?)";
-    private static final String UPDATE = "UPDATE Employee SET name = ?, lastname = ?, address = ?, salary = ? WHERE idEmployee = ?";
-    private static final String DELETE = "DELETE FROM Employee WHERE idEmployee = ?";
-    private static final String SELECT_ALL = "SELECT * FROM Employee";
-    private static final String SELECT_BY_ID = "SELECT * FROM Employee WHERE idEmployee = ?";
-    
-    // Méthode pour insérer un employé dans la table Employee
-    public boolean insertEmployee(Employee employee) {
-        boolean result = false;
-        Connection connection = null;
-        PreparedStatement statement = null;
+	/**
+	 * 
+	 * @param employe
+	 */
+	public void saveEmployee(Employee employe) {
+
+        entityManagerFactory = Persistence.createEntityManagerFactory("java_ee_db");
+        entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction trans = entityManager.getTransaction();
+        trans.begin();
         try {
-            connection = getConnection();
-
-            statement = connection.prepareStatement(INSERT);
-            statement.setString(1, employee.getPrenom());
-            statement.setString(2, employee.getNom());
-            statement.setString(3, employee.getAdresse());
-            statement.setInt(4, employee.getSalaire());
- 
-            int rows = statement.executeUpdate();
-            if (rows > 0) {
-                result = true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeConnection(connection);
-        }
-        return result;
+        	entityManager.persist(employe);
+            trans.commit();
+            System.out.println("OK");
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
     }
-
-    // Méthode pour mettre à jour un employé dans la table Employee
-    public boolean updateEmployee(Employee employee) {
-        boolean result = false;
-        Connection connection = null;
-        PreparedStatement statement = null;
+	/**
+	 * 
+	 * @return
+	 */
+	public List <Employee> getEmployees() {
+        entityManagerFactory = Persistence.createEntityManagerFactory("java_ee_db");
+        entityManager = entityManagerFactory.createEntityManager();
+        List<Employee> employees = null;
         try {
-            connection = getConnection();
-
-            statement = connection.prepareStatement(UPDATE);
-            statement.setString(1, employee.getPrenom());
-            statement.setString(2, employee.getNom());
-            statement.setString(3, employee.getAdresse());
-            statement.setInt(4, employee.getSalaire());
-            statement.setInt(5, employee.getId());
-
-            int rows = statement.executeUpdate();
-            if (rows > 0) {
-                result = true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeConnection(connection);
+        	employees = entityManager.createQuery("from Employee", Employee.class).getResultList();
         }
-        return result;
-    }
-
-    // Méthode pour supprimer un employé dans la table Employee
-    public boolean deleteEmployee(int idEmployee) {
-        boolean result = false;
-        Connection connection = null;
-        PreparedStatement statement = null;
-        try {
-            connection = getConnection();
-            
-            statement = connection.prepareStatement(DELETE);
-            statement.setInt(1, idEmployee);
-            
-            int rows = statement.executeUpdate();
-            if (rows > 0) {
-                result = true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeConnection(connection);
-        }
-        return result;
-    }
-
-    // Méthode pour récupérer tous les employés de la table Employee
-    public List<Employee> getAllEmployees() {
-        List<Employee> employees = new ArrayList<>();
-        Connection connection = null;
-        Statement statement = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getConnection();
-
-            statement = connection.createStatement();
-            
-            resultSet = statement.executeQuery(SELECT_ALL);
-            while (resultSet.next()) {
-                Employee employee = new Employee();
-                employee.setId(resultSet.getInt("i"));
-                employee.setPrenom(resultSet.getString("prenom"));
-                employee.setNom(resultSet.getString("nom"));
-                employee.setAdresse(resultSet.getString("adresse"));
-                employee.setSalaire(resultSet.getInt("salaire"));
-
-                employees.add(employee);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeConnection(connection);
+        catch (Exception e) {
+        	//TODO: handle exception
         }
         return employees;
     }
-
-    // Méthode pour récupérer un employé par son id de la table Employee
-    public Employee getEmployeeById(int idEmployee) {
-        Employee employee = null;
-        Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
+	
+	public Employee getEmployee(int Id) {
+		entityManagerFactory = Persistence.createEntityManagerFactory("java_ee_db");
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		Employee employe = null;
+		EntityTransaction trans = entityManager.getTransaction();
+		trans.begin();
+		try {
+			employe = entityManager.find(Employee.class, Id);
+			trans.commit();
+			System.out.println("OK");
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+		return employe;
+	}
+	
+	/**
+     * 
+     * @param employe
+     */
+    public void deleteEmployee(Employee employe) {
+    	EntityManagerFactory entityManagerFactory = null;
+        EntityManager entityManager = null;
+        entityManagerFactory = Persistence.createEntityManagerFactory("java_ee_db");
+        entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction trans = entityManager.getTransaction();
+        trans.begin();
         try {
-            connection = getConnection();
-
-            statement = connection.prepareStatement(SELECT_BY_ID);
-            statement.setInt(1, idEmployee);
-
-            resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                employee = new Employee();
-                employee.setId(resultSet.getInt("i"));
-                employee.setPrenom(resultSet.getString("prenom"));
-                employee.setNom(resultSet.getString("nom"));
-                employee.setAdresse(resultSet.getString("adresse"));
-                employee.setSalaire(resultSet.getInt("salaire"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeConnection(connection);
-        }
-        return employee;
+        	entityManager.remove(employe);
+            trans.commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+    }
+    /**
+     * 
+     * @param employe
+     */
+    public void updateEmployee(Employee employe) {
+    	EntityManagerFactory entityManagerFactory = null;
+        EntityManager entityManager = null;
+        entityManagerFactory = Persistence.createEntityManagerFactory("java_ee_db");
+        entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction trans = entityManager.getTransaction();
+        trans.begin();
+        try {
+        	entityManager.merge(employe);
+            trans.commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
     }
 }
-
