@@ -51,6 +51,12 @@ public class Employee {
 	public void setAdresse(String adresse) {
 		this.adresse = adresse;
 	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public int getSalaire() {
 		return salaire;
 	}
