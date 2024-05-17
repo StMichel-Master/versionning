@@ -1,13 +1,18 @@
 package fr.stmichel;
 
-public class Console {
-	/*private static EntityManagerFactory entityManagerFactory = null;
-	private static EntityManager entityManager = null;*/
-	static EmployeeDAO employeeDAO = new EmployeeDAO();
+//import java.util.*;
 
+//import jakarta.persistence.*;
+
+public class Console {
+
+	static ProjetDAO projetDAO = new ProjetDAO();
+	static EmployeeDAO employeeDAO = new EmployeeDAO();
+	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Employee employee = new Employee("Jean", "Dupont", "Paris", 2000);
+		Employee employee = new Employee("Nathan","Baillargea","Annecy", 2000);
+		Projet projet = new Projet("Projet 1","Description projet 1", 1000, employee);
 		employeeDAO.saveEmployee(employee);
+		projetDAO.saveProjet(projet);
 	}
 }

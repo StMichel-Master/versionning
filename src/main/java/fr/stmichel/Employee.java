@@ -17,6 +17,9 @@ public class Employee {
 	private String adresse;
 	@Column(name = "salaire")
 	private int salaire;
+	@OneToOne
+	@JoinColumn(name= "projetId", nullable = true)
+	private Projet projet;
 	
 	public Employee() {
 		super();
@@ -51,12 +54,6 @@ public class Employee {
 	public void setAdresse(String adresse) {
 		this.adresse = adresse;
 	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
 	public int getSalaire() {
 		return salaire;
 	}
@@ -66,5 +63,11 @@ public class Employee {
 	@Override
 	public String toString() {
 		return "Employee [nom=" + nom + ", prenom=" + prenom + ", adresse=" + adresse + ", salaire=" + salaire + "]";
+	}
+	public Projet getProjet() {
+		return projet;
+	}
+	public void setProjet(Projet projet) {
+		this.projet = projet;
 	}
 }
